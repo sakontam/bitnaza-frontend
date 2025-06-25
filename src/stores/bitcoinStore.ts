@@ -13,7 +13,7 @@ export const useBitcoinStore = defineStore("bitcoin", () => {
   } | null>(null);
 
   const selectedInterval = ref("15m");
-  const socket = io("http://localhost:5000");
+  const socket = io("https://bitnaza-backend.onrender.com");
 
   const previousStatistics = ref<{
     high_24h: number | null;
@@ -36,7 +36,7 @@ export const useBitcoinStore = defineStore("bitcoin", () => {
   const fetchBitcoinData = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/bitcoin?interval=${selectedInterval.value}`
+        `https://bitnaza-backend.onrender.com/api/bitcoin?interval=${selectedInterval.value}`
       );
       if (res.status === 200 && res.data) {
         bitcoinData.value = res.data.prices.map((item: any) => ({

@@ -14,7 +14,7 @@ export const useUsdToThbStore = defineStore("usdToThb", () => {
 
   const selectedInterval = ref("15m");
 
-  const socket = io("http://localhost:5000");
+  const socket = io("https://bitnaza-backend.onrender.com");
 
   const highPriceClass = ref("price-neutral");
   const lowPriceClass = ref("price-neutral");
@@ -37,7 +37,7 @@ export const useUsdToThbStore = defineStore("usdToThb", () => {
   const fetchUsdToThbData = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/usd-to-thb?interval=${selectedInterval.value}`
+        `https://bitnaza-backend.onrender.com/api/usd-to-thb?interval=${selectedInterval.value}`
       );
       if (res.status === 200 && res.data) {
         usdToThbData.value = res.data.prices.map((item: any) => ({
