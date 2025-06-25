@@ -23,13 +23,17 @@ const updateBitcoinChart = () => {
         {
           label: `Bitcoin Price (${store.selectedInterval})`,
           data: store.bitcoinData,
-          borderColor: "#FF9900",
           borderWidth: 2,
           fill: false,
-          backgroundColor: "rgba(255, 215, 0, 0.2)",
           pointRadius: 4,
           pointBackgroundColor: "#FFD700",
           pointBorderColor: "#3366CC",
+          segment: {
+            borderColor: (ctx) => {
+              if (!ctx.p0 || !ctx.p1) return "gray";
+              return ctx.p1.y > ctx.p0.y ? "red" : "green";
+            },
+          },
         },
       ],
     },

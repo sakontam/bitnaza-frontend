@@ -23,13 +23,17 @@ const updateUsdToThbChart = () => {
         {
           label: `USD to THB Exchange Rate (${store.selectedInterval})`,
           data: store.usdToThbData,
-          borderColor: "#33CC99",
           borderWidth: 2,
           fill: false,
-          backgroundColor: "rgba(255, 215, 0, 0.2)",
           pointRadius: 4,
-          pointBackgroundColor: "#33CC99",
-          pointBorderColor: "#FF00FF",
+          pointBackgroundColor: "#FFD700",
+          pointBorderColor: "#3366CC",
+          segment: {
+            borderColor: (ctx) => {
+              if (!ctx.p0 || !ctx.p1) return "gray";
+              return ctx.p1.y > ctx.p0.y ? "red" : "green";
+            },
+          },
         },
       ],
     },
