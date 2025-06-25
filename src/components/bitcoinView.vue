@@ -88,6 +88,7 @@ watch(() => store.bitcoinData, () => {
     <div v-if="loading" class="loading-overlay">
       <div class="spinner"></div>
       <span>Loading...</span>
+      <span>กำลังเปิดเซิฟเวอร์หลังบ้านกรุณารอสักครู่</span>
     </div>
     <div class="interval-buttons">
       <button
