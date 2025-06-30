@@ -1,8 +1,9 @@
-// stores/usdToThbStore.ts
 import { defineStore } from "pinia";
 import { ref, watch } from "vue";
-import axios from "axios";
-import { io } from "socket.io-client";
+import {
+  fetchUsdToThbFromAPI,
+  onNewUsdToThbData,
+} from "../services/usdToThbService";
 
 export const useUsdToThbStore = defineStore("usdToThb", () => {
   const usdToThbData = ref<any[]>([]);
@@ -13,8 +14,6 @@ export const useUsdToThbStore = defineStore("usdToThb", () => {
   } | null>(null);
 
   const selectedInterval = ref("15m");
-
-  const socket = io("https://bitnaza-backend.onrender.com");
 
   const highPriceClass = ref("price-neutral");
   const lowPriceClass = ref("price-neutral");
@@ -36,33 +35,30 @@ export const useUsdToThbStore = defineStore("usdToThb", () => {
 
   const fetchUsdToThbData = async () => {
     try {
-      const res = await axios.get(
-        `https://bitnaza-backend.onrender.com/api/usd-to-thb?interval=${selectedInterval.value}`
-      );
-      if (res.status === 200 && res.data) {
-        usdToThbData.value = res.data.prices.map((item: any) => ({
-          x: new Date(item.timestamp),
-          y: item.price,
-        }));
+      const data = await fetchUsdToThbFromAPI(selectedInterval.value);
 
-        previousStatistics.value = dailyStatistics.value ?? {
-          high_24h: null,
-          low_24h: null,
-          latest_price: null,
-        };
+      usdToThbData.value = data.prices.map((item: any) => ({
+        x: new Date(item.timestamp),
+        y: item.price,
+      }));
 
-        dailyStatistics.value = {
-          high_24h: parseFloat(res.data.high_24h.toFixed(2)),
-          low_24h: parseFloat(res.data.low_24h.toFixed(2)),
-          latest_price: parseFloat(res.data.latest_price.toFixed(2)),
-        };
-      }
+      previousStatistics.value = dailyStatistics.value ?? {
+        high_24h: null,
+        low_24h: null,
+        latest_price: null,
+      };
+
+      dailyStatistics.value = {
+        high_24h: parseFloat(data.high_24h.toFixed(2)),
+        low_24h: parseFloat(data.low_24h.toFixed(2)),
+        latest_price: parseFloat(data.latest_price.toFixed(2)),
+      };
     } catch (err) {
       console.error("Fetch USD/THB error:", err);
     }
   };
 
-  socket.on("new_usd_to_thb_data", () => {
+  onNewUsdToThbData(() => {
     fetchUsdToThbData();
   });
 
@@ -73,7 +69,12 @@ export const useUsdToThbStore = defineStore("usdToThb", () => {
     (newVal) => {
       const oldVal = previousStatistics.value.high_24h;
       if (oldVal !== null && newVal !== undefined) {
-        highPriceClass.value = newVal > oldVal ? "price-up" : newVal < oldVal ? "price-down" : "price-neutral";
+        highPriceClass.value =
+          newVal > oldVal
+            ? "price-up"
+            : newVal < oldVal
+            ? "price-down"
+            : "price-neutral";
         highArrow.value = newVal > oldVal ? "▲" : newVal < oldVal ? "▼" : "";
       }
     }
@@ -84,7 +85,12 @@ export const useUsdToThbStore = defineStore("usdToThb", () => {
     (newVal) => {
       const oldVal = previousStatistics.value.low_24h;
       if (oldVal !== null && newVal !== undefined) {
-        lowPriceClass.value = newVal > oldVal ? "price-up" : newVal < oldVal ? "price-down" : "price-neutral";
+        lowPriceClass.value =
+          newVal > oldVal
+            ? "price-up"
+            : newVal < oldVal
+            ? "price-down"
+            : "price-neutral";
         lowArrow.value = newVal > oldVal ? "▲" : newVal < oldVal ? "▼" : "";
       }
     }
@@ -95,7 +101,12 @@ export const useUsdToThbStore = defineStore("usdToThb", () => {
     (newVal) => {
       const oldVal = previousStatistics.value.latest_price;
       if (oldVal !== null && newVal !== undefined) {
-        latestPriceClass.value = newVal > oldVal ? "price-up" : newVal < oldVal ? "price-down" : "price-neutral";
+        latestPriceClass.value =
+          newVal > oldVal
+            ? "price-up"
+            : newVal < oldVal
+            ? "price-down"
+            : "price-neutral";
         latestArrow.value = newVal > oldVal ? "▲" : newVal < oldVal ? "▼" : "";
       }
     }
