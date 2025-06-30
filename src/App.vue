@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import bitcoinView from "./components/bitcoinView.vue";
 import UsdThbView from "./components/usd_thbView.vue";
-import Header from './components/Header/heade.vue'
+import Header from "./components/Header/header.vue";
 
 const selectedGraph = ref<string>("bitcoin");
 const isDropdownOpen = ref<boolean>(false);
@@ -19,6 +19,11 @@ const options = [
     icon: ["fas", "dollar-sign"],
   },
 ];
+const loading = ref(true);
+
+const handleLoaded = () => {
+  loading.value = false;
+};
 
 // ตัวแปรเก็บตัวเลือกที่เลือกปัจจุบัน
 const selectedOption = ref(options[0]);
@@ -39,11 +44,14 @@ const selectOption = (option: any) => {
 <template>
   <Header />
   <div class="dashboard">
-    <!-- Navigation -->
     <div class="navigation">
+      <!-- Navigation -->
       <div class="dropdown">
         <div class="dropdown-selected" @click="toggleDropdown">
-          <font-awesome-icon :icon="selectedOption.icon" class="dropdown-icon" />
+          <font-awesome-icon
+            :icon="selectedOption.icon"
+            class="dropdown-icon"
+          />
           <span>{{ selectedOption.label }}</span>
         </div>
         <ul v-show="isDropdownOpen" class="dropdown-list">
@@ -59,11 +67,17 @@ const selectOption = (option: any) => {
         </ul>
       </div>
     </div>
+    <!-- Loading Overlay -->
+    <div v-if="loading" class="loading-overlay">
+      <div class="spinner"></div>
+      <span>Loading...</span>
+      <span>กำลังเปิดเซิฟเวอร์หลังบ้านกรุณารอสักครู่</span>
+    </div>
 
-    <!-- แสดงกราฟตามที่เลือก -->
+    <!-- Graph content -->
     <div class="chart-container">
       <div v-if="selectedGraph === 'bitcoin'">
-        <bitcoinView />
+        <bitcoinView :onLoaded="handleLoaded" />
       </div>
       <div v-else-if="selectedGraph === 'usd_thb'">
         <UsdThbView />
@@ -150,5 +164,36 @@ const selectOption = (option: any) => {
 .chart-container > div {
   width: 100%;
   height: 100%;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #f7931a;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

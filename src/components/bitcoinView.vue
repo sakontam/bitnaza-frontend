@@ -2,7 +2,7 @@
 import { Chart, registerables } from "chart.js";
 import "chartjs-adapter-date-fns";
 import zoomPlugin from "chartjs-plugin-zoom";
-import { onMounted, watch, ref } from "vue";
+import { onMounted, watch } from "vue";
 import { useBitcoinStore } from "../stores/bitcoinStore";
 
 Chart.register(...registerables, zoomPlugin);
@@ -10,7 +10,7 @@ Chart.register(...registerables, zoomPlugin);
 const store = useBitcoinStore();
 let bitcoinChart: Chart | null = null;
 
-const loading = ref(true);
+const props = defineProps<{ onLoaded: () => void }>();
 
 const updateBitcoinChart = () => {
   const ctx = document.getElementById("bitcoin-chart") as HTMLCanvasElement;
@@ -71,31 +71,25 @@ const updateBitcoinChart = () => {
 };
 
 onMounted(async () => {
-  loading.value = true;
   await store.fetchBitcoinData();
   updateBitcoinChart();
-  loading.value = false;
+  props.onLoaded();
 });
 
 watch(() => store.bitcoinData, () => {
   updateBitcoinChart();
-  loading.value = false;
+  props.onLoaded();
 });
 </script>
 
 <template>
   <div class="chart-container">
-    <div v-if="loading" class="loading-overlay">
-      <div class="spinner"></div>
-      <span>Loading...</span>
-      <span>กำลังเปิดเซิฟเวอร์หลังบ้านกรุณารอสักครู่</span>
-    </div>
     <div class="interval-buttons">
       <button
         v-for="interval in ['1m', '5m', '15m', '30m', '1h', '4h', '1d']"
         :key="interval"
         :class="{ active: store.selectedInterval === interval }"
-        @click="() => { store.selectedInterval = interval; loading = true; }"
+        @click="() => { store.selectedInterval = interval;}"
       >
         {{ interval }}
       </button>
@@ -131,33 +125,6 @@ watch(() => store.bitcoinData, () => {
   align-items: center;
   justify-content: center;
   position: relative;
-}
-
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-.spinner {
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #f7931a;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 10px;
-}
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 .price-container {
