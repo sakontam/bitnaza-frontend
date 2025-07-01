@@ -104,6 +104,10 @@ onUnmounted(() => {
         </div>
       </div>
     </div>
+    <footer class="footer">
+      <span>เว็บไซต์นี้อยู่ระหว่างการพัฒนา</span>
+      <span>© 2025 Sakontam</span>
+    </footer>
   </div>
 </template>
 
@@ -235,6 +239,20 @@ onUnmounted(() => {
 
 .coin-star:hover {
   color: gold;
+}
+
+.footer {
+  margin-top: auto;
+  width: 100%;
+  padding: 16px 32px;
+  background-color: #f5f5f5;
+  color: #555;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #ddd;
+  box-sizing: border-box;
 }
 
 .loading-overlay {
