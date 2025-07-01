@@ -13,9 +13,11 @@ import { faBitcoin } from '@fortawesome/free-brands-svg-icons';
 library.add(faBitcoin, faGem, faDollarSign);
 
 // สร้างแอป
+import router from './router';
 const app = createApp(App);
 
 app.use(pinia); // ✅ ลงทะเบียน Pinia กับแอป
+app.use(router); // ✅ ลงทะเบียน Router
 
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.mount('#app');

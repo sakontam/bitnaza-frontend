@@ -4,12 +4,15 @@ import zoomPlugin from "chartjs-plugin-zoom";
 import "chartjs-adapter-date-fns";
 import { onMounted, onBeforeUnmount, watch } from "vue";
 import { useUsdToThbStore } from "../stores/usdToThbStore";
-
+import { useRouter } from "vue-router";
 Chart.register(zoomPlugin);
 const store = useUsdToThbStore();
 
 let usdToThbChart: Chart | null = null;
-
+const router = useRouter();
+const goBackHome = () => {
+  router.push("/");
+};
 const updateUsdToThbChart = () => {
   const ctx = document.getElementById("usd-to-thb-chart") as HTMLCanvasElement;
   if (!ctx) return;
@@ -82,7 +85,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="chart-container">
-    <!-- ปุ่มเลือกช่วงเวลา -->
+    <button class="back-button" @click="goBackHome">กลับหน้าแรก</button>
     <div class="interval-buttons">
       <button
         v-for="interval in ['1m', '5m', '15m', '30m', '1h', '4h', '1d']"
@@ -128,6 +131,7 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   position: relative;
+  padding-top: 80px;
 }
 
 .price-container {
@@ -182,5 +186,31 @@ canvas {
 
 .price-neutral {
   color: black;
+}
+
+.back-button {
+  align-self: flex-start;
+  margin-left: 32px;
+  margin-bottom: 20px;
+  padding: 10px 18px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #f7931a;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.back-button:hover {
+  background-color: #e07e0f;
+  transform: translateY(-1px);
+}
+
+.back-button:active {
+  transform: translateY(1px);
+  box-shadow: none;
 }
 </style>
